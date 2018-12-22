@@ -1,10 +1,8 @@
 package com.learn.blob.blobstorage;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
-import java.util.Date;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +19,7 @@ import com.microsoft.azure.storage.blob.PipelineOptions;
 import com.microsoft.azure.storage.blob.ServiceURL;
 import com.microsoft.azure.storage.blob.SharedKeyCredentials;
 import com.microsoft.azure.storage.blob.StorageURL;
-import com.microsoft.azure.storage.blob.models.BlockBlobsStageBlockHeaders;
-import com.microsoft.azure.storage.blob.models.BlockBlobsUploadResponse;
+import com.microsoft.azure.storage.blob.models.BlockBlobUploadResponse;
 import com.microsoft.rest.v2.http.HttpPipeline;
 
 import io.reactivex.Flowable;
@@ -30,9 +27,9 @@ import io.reactivex.Single;
 
 @RestController
 public class BlobStorage {
-	private static final String ACCOUT= "blobpoc12";
-	private static final String URL ="https://blobpoc12.blob.core.windows.net";
-	private static final String KEY="MpSDwyAFvp/XJNyN56s2tGBax7skMetz4kb9hhXB8laDLCFWc4A0EA0E1Tzfj/1dNVA/gLROzm42Vn3uQ4Xmdg==";
+	private static final String ACCOUT= "<Your ACCOUNT>";
+	private static final String URL ="https://<Your ACCOUNT>.blob.core.windows.net";
+	private static final String KEY="<Shared Key>";
 	
 	@PostMapping(value="/api/upload")
 	@ResponseStatus(code = HttpStatus.OK)
@@ -47,10 +44,10 @@ public class BlobStorage {
 		metadata.put("individualId", "1233");
 		metadata.put("appointmentId", "678");
 		metadata.put("dateAndTime","12-21-2018");
-		blobUrl.setMetadata(metadata,null);
+		blobUrl.setMetadata(metadata,null,null);
 		BlockBlobURL blockBlob = new BlockBlobURL(new java.net.URL(blobUrl.toString()), pipeline);
 		
-		Single<BlockBlobsUploadResponse> response = blockBlob.upload(Flowable.just(ByteBuffer.wrap(file.getBytes())), file.getSize(), null, metadata, null);
+		Single<BlockBlobUploadResponse> response = blockBlob.upload(Flowable.just(ByteBuffer.wrap(file.getBytes())), file.getSize(), null, metadata, null,null);
 		response.subscribe(rep -> {
 		System.out.println(rep.statusCode());});
 		
